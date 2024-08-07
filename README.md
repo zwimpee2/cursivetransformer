@@ -120,3 +120,79 @@ This sample is taken from early training. It's not the model's best, but it look
 ![sample_v18](static/sample_v18.png)
 
 ![sample_v19](static/sample_v19.png)
+
+
+
+### Progress August 06
+
+#### Experimental Results
+
+##### Cross-Attention Ablation Study
+
+- Reran the cross-attention ablation study (TODO: add specific results once available)
+- Confirmed the importance of cross-attention for generating coherent, context-appropriate handwriting
+
+##### Model Architecture Improvements
+
+- Successfully implemented and tested various cross-attention mechanisms:
+  - Standard cross-attention
+  - Causal cross-attention
+- Observed improved performance with causal cross-attention (TODO: quantify improvement)
+
+##### Dataset Enhancements
+
+- Expanded dataset to include both cursive and print handwriting styles
+- Current dataset size: 500k examples
+- Improved data augmentation techniques for better generalization
+
+##### Training Optimizations
+
+- Increased training duration from 30k steps on L4 GPU to 50k steps on A100 GPU
+- Experimented with learning rate schedules; found constant learning rate of 1e-2 to be most effective
+- Doubled context window to 1500 tokens, allowing for longer handwriting sequences
+
+#### Engineering Efforts
+
+##### Tokenization Improvements
+
+- Implemented polar coordinate tokenization (`theta`, `radius_and_is_pen_down`)
+- Reduced context window size by 33% without loss of performance
+- Discovered the importance of token order: "point and then shoot" (`theta`, `radius_and_is_pen_down`) outperforms "shoot and then point" (`radius_and_is_pen_down`, `theta`)
+
+###### Infrastructure and Tooling
+
+- Integrated Weights and Biases (W&B) for efficient logging and visualization
+- Developed custom data collection interface (`collect.html`) for gathering handwriting samples
+- Created preprocessing pipeline for converting raw JSON data to tokenized format
+
+#### Code Optimizations
+
+- Refactored core Transformer architecture for improved readability and maintainability
+- Implemented various cross-attention mechanisms as modular components
+
+#### Future Directions
+
+1. Further expand and diversify the dataset
+   - Collect more handwriting styles
+   - Increase variety of words and phrases
+
+2. Experiment with advanced model architectures
+   - Test different Transformer variants (e.g., Performer, Reformer)
+   - Explore multi-task learning approaches
+
+3. Improve inference speed and model efficiency
+   - Investigate quantization techniques
+   - Optimize for deployment on various hardware platforms
+
+4. Develop user interface for real-time handwriting generation
+   - Create web-based demo for interactive handwriting synthesis
+   - Implement style transfer capabilities
+
+5. Conduct in-depth analysis of learned representations
+   - Visualize attention patterns and token embeddings
+   - Investigate interpretability of the model's internal representations
+
+6. Explore applications beyond handwriting synthesis
+   - Handwriting recognition
+   - Style transfer between different handwriting styles
+   - Personalized font generation
