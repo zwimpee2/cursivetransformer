@@ -196,3 +196,25 @@ This sample is taken from early training. It's not the model's best, but it look
    - Handwriting recognition
    - Style transfer between different handwriting styles
    - Personalized font generation
+
+### Progress August 5
+
+**Compare cartesian and polar tokenizers.** For some time we have been unsure of which is better: using a cartesian or polar representation of pen offsets. After some time away from this project, we solved a pernicious bug in the cartesian tokenizer and was able to do a side-by-side comparison. At the time of writing, both runs were in progress and the sample quality of the model using the polar tokenizer seemed a bit better. This is good news because the polar representation also uses three tokens per stroke rather than four, thus it permits a 33% longer context window. We will let the models train to completion before making a final call.
+
+![wandb_compare_cartpolar](static/wandb_compare_cartpolar.png)
+
+Getting some weird artifacts in the final trained polar model. Besides that the polar model looks much better. Here are two test samples.
+
+![sample_v20](static/sample_v20.png)
+
+![sample_v21](static/sample_v21.png)
+
+### Progress August 8-9
+
+Spent some time looking for other (larger) datasets to train and debug on. IAM was not sending emails to my account so I was unable to access its online stroke dataset, which is the most commonly used one. [Here is a more recent dataset](https://github.com/brownvc/decoupled-style-descriptors?tab=readme-ov-file#brush-dataset) that looks promising.
+
+### Progress August 11-12
+
+Changed data formatting to use zipped pickle files, following the BRUSH format. Wrote some code for loading BRUSH data into the format needed for training. Performed training on the full BRUSH dataset (27,000 samples) using an A100 GPU with a 900 token context window. Results look ok.
+
+![first_brush_results](static/first_brush_results.png)

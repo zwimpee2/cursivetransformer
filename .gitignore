@@ -11,6 +11,11 @@ __pycache__
 *.epub
 *.json
 *.zip
+/data/BRUSH*
+/data/BIGBANK*
+/data/*.json
+/data/*.zip
+/data/*.txt
 
 /examples*
 
