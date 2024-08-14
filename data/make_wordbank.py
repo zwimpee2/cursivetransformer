@@ -1,6 +1,8 @@
-import numpy as np
-import string
 import argparse
+import string
+
+import numpy as np
+
 
 def generate_word_bank(num_examples, min_length, max_length, uppercase_prob, capitalize_prob, period_prob, letter_probs, length_slope):
     letters = string.ascii_lowercase
@@ -11,7 +13,7 @@ def generate_word_bank(num_examples, min_length, max_length, uppercase_prob, cap
     length_probs[1] /= .8
     length_probs /= length_probs.sum()
     print('Length probs:', length_probs)
-    
+
     word_bank = []
     for _ in range(num_examples):
         length = np.random.choice(length_range, p=length_probs)
