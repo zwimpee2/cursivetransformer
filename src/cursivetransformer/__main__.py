@@ -7,7 +7,7 @@ import wandb
 from torch.optim.lr_scheduler import StepLR
 from torch.utils.tensorboard import SummaryWriter
 
-from .config import AppConfig, ModelConfig
+from .configs import AppConfig, ModelConfig
 from .data import InfiniteDataLoader, create_datasets
 from .model import Transformer
 from .utils import evaluate, parse_args, save_samples, setup_logger
@@ -65,7 +65,7 @@ def main(config: AppConfig):
         optimizer = torch.optim.AdamW(
             model.parameters(),
             lr=config.learning_rate,
-            weight_decay=args.weight_decay,
+            weight_decay=config.weight_decay,
             betas=(0.9, 0.99),
             eps=1e-8,
         )
@@ -73,7 +73,7 @@ def main(config: AppConfig):
         optimizer = torch.optim.Adam(
             model.parameters(),
             lr=config.learning_rate,
-            weight_decay=args.weight_decay,
+            weight_decay=config.weight_decay,
             betas=(0.9, 0.99),
             eps=1e-8,
         )
@@ -88,16 +88,16 @@ def main(config: AppConfig):
 
     batch_loader = InfiniteDataLoader(
         train_dataset,
-        batch_size=args.batch_size,
+        batch_size=config.batch_size,
         pin_memory=True,
         num_workers=args.num_workers,
     )
 
     wandb.init(
-        project=args.wandb_project,
-        entity=args.wandb_entity,
-        name=args.wandb_run_name,
-        config=args,
+        project=config.wandb_project,
+        entity=config.wandb_entity,
+        name=config.wandb_run_name,
+        config=config,
     )
 
     wandb.config.update(
@@ -105,10 +105,10 @@ def main(config: AppConfig):
             "n_layer": config.n_layer,
             "n_head": config.n_head,
             "n_embd": config.n_embd,
-            "learning_rate": args.learning_rate,
-            "weight_decay": args.weight_decay,
-            "batch_size": args.batch_size,
-            "ablate_cross_attention": args.ablate_cross_attention,
+            "learning_rate": config.learning_rate,
+            "weight_decay": config.weight_decay,
+            "batch_size": config.batch_size,
+            "ablate_cross_attention": config.ablate_cross_attention,
         }
     )
 
@@ -121,7 +121,7 @@ def main(config: AppConfig):
 
         # get the next batch, ship to device, and unpack it to input and target
         batch = batch_loader.next()
-        batch = [t.to(args.device) for t in batch]
+        batch = [t.to(config.device) for t in batch]
         X, C, Y = batch
 
         # feed into the model
@@ -156,7 +156,7 @@ def main(config: AppConfig):
             )
             # save the model to disk if it has improved
             if best_loss is None or test_loss < best_loss:
-                out_path = os.path.join(args.work_dir, "model.pt")
+                out_path = os.path.join(config.work_dir, "model.pt")
                 print(
                     f"Test loss {test_loss:.4f} is the best so far, saving model to {out_path}"
                 )
@@ -173,7 +173,7 @@ def main(config: AppConfig):
 
         step += 1
         # termination conditions
-        if args.max_steps >= 0 and step >= args.max_steps:
+        if config.max_steps >= 0 and step >= args.max_steps:
             break
 
     wandb.finish()
